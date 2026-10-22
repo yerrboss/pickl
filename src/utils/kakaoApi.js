@@ -30,7 +30,7 @@ export async function searchKakaoPlaces(keyword) {
       `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(keyword)}`,
       {
         headers: {
-          Authorization: `KakaoAK ${KAKAO_API_KEY}`
+          "Authorization": `KakaoAK ${import.meta.env.VITE_KAKAO_API_KEY}`
         }
       }
     );

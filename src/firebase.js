@@ -1,23 +1,24 @@
 // src/firebase.js
 
+console.log("🔥 Loaded API Key:", import.meta.env.VITE_FIREBASE_API_KEY);
+console.log("💛 Loaded Kakao Key:", import.meta.env.VITE_KAKAO_API_KEY);
+
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC_aRDYc3tEnz_gajqT04u2H2niiHC9GRU",
-  authDomain: "pickl-54360.firebaseapp.com",
-  projectId: "pickl-54360",
-  storageBucket: "pickl-54360.firebasestorage.app",
-  messagingSenderId: "226235336248",
-  appId: "1:226235336248:web:fe8a687e8908a2c75b48cd",
-  measurementId: "G-E71T69XQSB"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
-// Firestore export
 export const db = getFirestore(app);
 export { app, analytics };

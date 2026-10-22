@@ -13,7 +13,7 @@ import { setLocalNickname, getLocalNickname, shareCourse } from './utils/courseS
 import { ShieldAlert, Share2, User, BookmarkCheck } from 'lucide-react';
 
 export default function App() {
-  const [currentDesign, setCurrentDesign] = useState('v2');
+  const [currentDesign, setCurrentDesign] = useState('v1');
   const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
