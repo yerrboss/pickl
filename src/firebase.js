@@ -5,13 +5,13 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC_aRDVc3tFnz_gajqT4u2H2niiHC9GRU", // 👈 '@' 제거됨
+  apiKey: "AIzaSyC_aRDYc3tEnz_gajqT04u2H2niiHC9GRU",
   authDomain: "pickl-54360.firebaseapp.com",
   projectId: "pickl-54360",
-  storageBucket: "pickl-54360.appspot.com",
-  messagingSenderId: "22623336248",
-  appId: "1:22623336248:web:fo8687a8908a2c75b48cd",
-  measurementId: "G-67IT69KDSB"
+  storageBucket: "pickl-54360.firebasestorage.app",
+  messagingSenderId: "226235336248",
+  appId: "1:226235336248:web:fe8a687e8908a2c75b48cd",
+  measurementId: "G-E71T69XQSB"
 };
 
 // Initialize Firebase
