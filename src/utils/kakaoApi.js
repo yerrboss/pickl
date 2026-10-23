@@ -17,61 +17,45 @@ function parseCategoryAndIcon(categoryName = '') {
 }
 
 export async function searchKakaoPlaces(keyword) {
-  const KAKAO_JS_KEY = "c351775970e2a4f35089aba5d51d01c6";
-
-  return new Promise((resolve) => {
-    // 이미 SDK가 로드되어 있는지 확인
-    if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
-      const script = document.createElement('script');
-      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${KAKAO_JS_KEY}&libraries=services`;
-      script.onload = () => {
-        window.kakao.maps.load(() => {
-          executeSearch(keyword, resolve);
-        });
-      };
-      script.onerror = () => {
-        console.error("카카오 맵 SDK 로드 실패");
-        resolve([]);
-      };
-      document.head.appendChild(script);
-    } else {
-      executeSearch(keyword, resolve);
+  try {
+    const response = await fetch(`/api/kakao-search?query=${encodeURIComponent(keyword)}`);
+    
+    if (!response.ok) {
+      throw new Error(`API 서버 호출 실패 (상태 코드: ${response.status})`);
     }
-  });
-}
 
-function executeSearch(keyword, resolve) {
-  const ps = new window.kakao.maps.services.Places();
-  
-  ps.keywordSearch(keyword, (data, status) => {
-    if (status === window.kakao.maps.services.Status.OK) {
-      const results = data.map((doc, index) => {
-        const parsed = parseCategoryAndIcon(doc.category_name);
-        
-        return {
-          id: `kakao_${doc.id}`,
-          name: doc.place_name,
-          category: parsed.category,
-          address: doc.road_address_name || doc.address_name,
-          phone: doc.phone || '정보 없음',
-          lat: parseFloat(doc.y),
-          lng: parseFloat(doc.x),
-          url: doc.place_url,
-          image: `https://images.unsplash.com/photo-${1541888946425 + index * 100}?auto=format&fit=crop&w=600&q=80`,
-          rating: (4.5 + (index % 4) * 0.1).toFixed(1),
-          reviews: 150 + index * 32,
-          price: parsed.price,
-          hours: '11:00 - 21:00 (정보 참조)',
-          waitingTime: index % 3 === 0 ? '바로 입장' : '약 20분 대기',
-          waitingLevel: index % 3 === 0 ? 'low' : 'med',
-          description: `[카카오 실시간] ${doc.road_address_name || doc.address_name}에 위치한 ${doc.place_name}입니다.`,
-          energyLevel: 45 + (index * 15) % 45,
-          isIndoor: parsed.isIndoor
-        };
-      });
-      resolve(results);
-    } else {
-      resolve([]);
+    const data = await response.json();
+    
+    if (!data.documents) {
+      return [];
     }
-  });
+
+    return data.documents.map((doc, index) => {
+      const parsed = parseCategoryAndIcon(doc.category_name);
+      
+      return {
+        id: `kakao_${doc.id}`,
+        name: doc.place_name,
+        category: parsed.category,
+        address: doc.road_address_name || doc.address_name,
+        phone: doc.phone || '정보 없음',
+        lat: parseFloat(doc.y),
+        lng: parseFloat(doc.x),
+        url: doc.place_url,
+        image: `https://images.unsplash.com/photo-${1541888946425 + index * 100}?auto=format&fit=crop&w=600&q=80`,
+        rating: (4.5 + (index % 4) * 0.1).toFixed(1),
+        reviews: 150 + index * 32,
+        price: parsed.price,
+        hours: '11:00 - 21:00 (정보 참조)',
+        waitingTime: index % 3 === 0 ? '바로 입장' : '약 20분 대기',
+        waitingLevel: index % 3 === 0 ? 'low' : 'med',
+        description: `[카카오 실시간] ${doc.road_address_name || doc.address_name}에 위치한 ${doc.place_name}입니다.`,
+        energyLevel: 45 + (index * 15) % 45,
+        isIndoor: parsed.isIndoor
+      };
+    });
+  } catch (error) {
+    console.error("장소 검색 중 오류 발생:", error);
+    return [];
+  }
 }
