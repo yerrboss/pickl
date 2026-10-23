@@ -18,7 +18,7 @@ function parseCategoryAndIcon(categoryName = '') {
 }
 
 export async function searchKakaoPlaces(keyword) {
-  const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_API_KEY;
+  const KAKAO_API_KEY = "c351775970e2a4f35089aba5d51d01c6";
   
   if (!KAKAO_API_KEY) {
     console.error("카카오 API 키가 설정되지 않았습니다.");
@@ -30,7 +30,7 @@ export async function searchKakaoPlaces(keyword) {
       `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(keyword)}`,
       {
         headers: {
-          "Authorization": `KakaoAK ${import.meta.env.VITE_KAKAO_API_KEY}`
+          "Authorization": `KakaoAK ${KAKAO_API_KEY}`
         }
       }
     );
