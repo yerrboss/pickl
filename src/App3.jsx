@@ -16,11 +16,13 @@ const INITIAL_SPOTS = [
     tags: ['#인스타감성', '#이색체험', '#힙스터카페'],
     image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 연무장5길 6',
+    phone: '02-3409-5971',
     price: '커피 6,000원~',
     openHours: '11:00 - 20:00 (월 휴무)',
     waitingTime: '약 15분',
     vibes: '감성적인 숍들과 카페가 모인 힙스터들의 성지',
     rating: 4.8,
+    reviews: 730,
     lat: 37.5445,
     lng: 127.0560,
     indoor: true,
@@ -34,11 +36,13 @@ const INITIAL_SPOTS = [
     tags: ['#웨이팅맛집', '#해장성지', '#성수필수'],
     image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 연무장길 45',
+    phone: '02-465-6580',
     price: '감자탕(소) 28,000원',
     openHours: '24시간 영업',
     waitingTime: '약 40분 (피크타임)',
     vibes: '줄 서서 먹는 깊고 진한 국물의 감자탕 맛집',
     rating: 4.6,
+    reviews: 3520,
     lat: 37.5470,
     lng: 127.0530,
     indoor: true,
@@ -52,11 +56,13 @@ const INITIAL_SPOTS = [
     tags: ['#전시회', '#야외산책', '#데이트코스'],
     image: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 왕십리로 83-21',
+    phone: '02-6233-1500',
     price: '입장료 12,000원',
     openHours: '11:00 - 18:00',
     waitingTime: '바로 입장 가능',
     vibes: '트렌디한 트랜지셔널 아트 전시와 힐링 스팟',
     rating: 4.9,
+    reviews: 4800,
     lat: 37.5430,
     lng: 127.0580,
     indoor: false,
@@ -70,11 +76,13 @@ const INITIAL_SPOTS = [
     tags: ['#이색체험', '#고텐션', '#라이브펍'],
     image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 아차산로 113',
+    phone: '02-555-9876',
     price: '칵테일 12,000원~',
     openHours: '18:00 - 02:00',
     waitingTime: '약 10분',
     vibes: '네온 조명 아래 음악과 함께 텐션 올리는 플레이스',
     rating: 4.7,
+    reviews: 620,
     lat: 37.5420,
     lng: 127.0550,
     indoor: true,
@@ -88,11 +96,13 @@ const INITIAL_SPOTS = [
     tags: ['#인스타감성', '#힙스터카페', '#디저트'],
     image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto-format&fit=crop&q=80',
     address: '서울 마포구 동교로29길 34',
+    phone: '02-333-4455',
     price: '참깨라떼 6,500원',
     openHours: '12:00 - 21:00',
     waitingTime: '약 20분',
     vibes: '참기름과 고소한 라떼의 미친 컬래버',
     rating: 4.7,
+    reviews: 410,
     lat: 37.5620,
     lng: 126.9240,
     indoor: true,
@@ -184,7 +194,6 @@ export default function App3({ currentDesign = 'v3' }) {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans selection:bg-fuchsia-500 selection:text-white pb-20 md:pb-0 pt-14">
       
-      {/* Top Header */}
       <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-lg border-b border-neutral-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xl font-black italic tracking-widest text-fuchsia-500">Pick;L</span>
@@ -216,7 +225,6 @@ export default function App3({ currentDesign = 'v3' }) {
         </div>
       </header>
 
-      {/* Region Switcher & Filters */}
       <div className="bg-neutral-950 border-b border-neutral-800 px-4 py-3 space-y-3">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
           {regions.map(r => (
@@ -234,7 +242,6 @@ export default function App3({ currentDesign = 'v3' }) {
           ))}
         </div>
 
-        {/* Tension & Rain Tuner Bar */}
         <div className="flex items-center justify-between gap-4 pt-1">
           <div className="flex items-center gap-2 text-xs font-bold text-neutral-300 flex-1">
             <Flame className="w-4 h-4 text-fuchsia-500 shrink-0" />
@@ -261,10 +268,8 @@ export default function App3({ currentDesign = 'v3' }) {
         </div>
       </div>
 
-      {/* Main Content Grid */}
       <div className="flex-1 max-w-7xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Shorts Feed */}
         <div className={`${showMapPanel ? 'lg:col-span-5' : 'lg:col-span-8'} transition-all duration-300 space-y-4`}>
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-neutral-400">
@@ -286,7 +291,8 @@ export default function App3({ currentDesign = 'v3' }) {
                 return (
                   <div 
                     key={spot.id}
-                    className={`group relative rounded-3xl overflow-hidden border transition-all duration-300 bg-neutral-900 flex flex-col justify-between ${
+                    onClick={() => setActiveModalSpot(spot)}
+                    className={`group relative rounded-3xl overflow-hidden border transition-all duration-300 bg-neutral-900 flex flex-col justify-between cursor-pointer ${
                       isFeatured ? 'sm:col-span-2 h-80' : 'h-72'
                     } ${
                       isSelected ? 'border-fuchsia-500 shadow-[0_0_20px_rgba(217,70,239,0.3)]' : 'border-neutral-800 hover:border-neutral-700'
@@ -310,7 +316,7 @@ export default function App3({ currentDesign = 'v3' }) {
                       </div>
 
                       <button 
-                        onClick={() => toggleLike(spot.id)}
+                        onClick={(e) => { e.stopPropagation(); toggleLike(spot.id); }}
                         className="p-2 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white hover:text-fuchsia-400 transition"
                       >
                         <Heart className={`w-4 h-4 ${isLiked ? 'fill-fuchsia-500 text-fuchsia-500' : ''}`} />
@@ -331,13 +337,16 @@ export default function App3({ currentDesign = 'v3' }) {
 
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => setActiveModalSpot(spot)}
-                            className="px-3 py-1.5 rounded-full bg-neutral-800/80 backdrop-blur-md text-xs font-bold text-neutral-300 hover:text-white"
+                            onClick={(e) => { e.stopPropagation(); setActiveModalSpot(spot); }}
+                            className="md:hidden px-3 py-1.5 rounded-full bg-neutral-800/80 backdrop-blur-md text-xs font-bold text-neutral-300 hover:text-white"
                           >
                             상세보기
                           </button>
                           <button
-                            onClick={() => toggleSelectSpot(spot.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSelectSpot(spot.id);
+                            }}
                             className={`px-4 py-1.5 rounded-full text-xs font-black transition ${
                               isSelected
                                 ? 'bg-fuchsia-500 text-white shadow-md'
@@ -356,7 +365,6 @@ export default function App3({ currentDesign = 'v3' }) {
           )}
         </div>
 
-        {/* Dynamic Map Panel */}
         {showMapPanel && (
           <div className="lg:col-span-4 bg-neutral-950 border border-neutral-800 rounded-3xl p-4 flex flex-col justify-between min-h-[380px]">
             <div className="flex items-center justify-between mb-3">
@@ -373,7 +381,6 @@ export default function App3({ currentDesign = 'v3' }) {
           </div>
         )}
 
-        {/* Route Summary Panel */}
         <div className={`${showMapPanel ? 'lg:col-span-3' : 'lg:col-span-4'} space-y-4 transition-all duration-300`}>
           <div className="p-5 rounded-3xl bg-neutral-950 border border-neutral-800 space-y-4 sticky top-20">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
@@ -433,49 +440,82 @@ export default function App3({ currentDesign = 'v3' }) {
         theme="v3"
       />
 
-      {/* Detail Modal */}
+      {/* v3 테마 풍부한 상세 모달 */}
       {activeModalSpot && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl space-y-4 p-5">
-            <div className="relative h-48 rounded-2xl overflow-hidden">
-              <img src={activeModalSpot.image} className="w-full h-full object-cover" />
-              <button 
-                onClick={() => setActiveModalSpot(null)}
-                className="absolute top-3 right-3 p-1.5 rounded-full bg-black/60 text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-black text-white">{activeModalSpot.name}</h3>
-              <p className="text-xs text-fuchsia-400 font-bold mt-0.5">{activeModalSpot.region} · {activeModalSpot.category}</p>
-            </div>
-
-            <p className="text-xs text-neutral-300 bg-neutral-950 p-3 rounded-xl border border-neutral-800">
-              "{activeModalSpot.vibes}"
-            </p>
-
-            <div className="space-y-1 text-xs text-neutral-400">
-              <p>📍 {activeModalSpot.address}</p>
-              <p>💰 {activeModalSpot.price}</p>
-              <p>⏰ {activeModalSpot.openHours}</p>
-            </div>
-
-            <button
-              onClick={() => {
-                toggleSelectSpot(activeModalSpot.id);
-                setActiveModalSpot(null);
-              }}
-              className="w-full py-3 rounded-2xl bg-fuchsia-500 text-white font-black text-xs"
-            >
-              {selectedSpots.includes(activeModalSpot.id) ? '코스에서 제거' : '코스에 담기'}
-            </button>
+  <div 
+    onClick={() => setActiveModalSpot(null)}
+    className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer"
+  >
+    <div 
+      onClick={(e) => e.stopPropagation()}
+      className="bg-neutral-900 border border-neutral-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative text-white cursor-default"
+    >
+      <button onClick={() => setActiveModalSpot(null)} className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black">
+        <X className="w-5 h-5" />
+      </button>
+      <div className="relative h-60">
+        <img src={activeModalSpot.image} alt={activeModalSpot.name} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-black/40" />
+        <div className="absolute bottom-4 left-5 right-5">
+          <span className="px-3 py-1 bg-fuchsia-500 text-white text-xs font-bold rounded-full mb-2 inline-block">
+            {activeModalSpot.category}
+          </span>
+          <h2 className="text-2xl font-black">{activeModalSpot.name}</h2>
+        </div>
+      </div>
+      <div className="p-6 space-y-4 max-h-[50vh] overflow-y-auto">
+        <div className="grid grid-cols-3 gap-2 bg-neutral-950 p-3 rounded-2xl text-center border border-neutral-800">
+          <div>
+            <p className="text-[10px] text-neutral-400">평점</p>
+            <p className="text-sm font-bold text-amber-400">★ {activeModalSpot.rating}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-neutral-400">대기 상태</p>
+            <p className="text-sm font-bold text-fuchsia-400">{activeModalSpot.waitingTime}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-neutral-400">리뷰 수</p>
+            <p className="text-sm font-bold text-neutral-200">{activeModalSpot.reviews || 300}개</p>
           </div>
         </div>
-      )}
 
-      {/* Random Modal */}
+        <div>
+          <h4 className="text-xs font-bold text-neutral-400 uppercase mb-1">분위기 & 특징</h4>
+          <p className="text-xs text-neutral-200 leading-relaxed">"{activeModalSpot.vibes}"</p>
+        </div>
+
+        <div className="space-y-2 text-xs">
+          <div className="flex items-center gap-3">
+            <span className="text-neutral-400 w-16 shrink-0">📍 주소</span>
+            <span className="text-neutral-200">{activeModalSpot.address}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-neutral-400 w-16 shrink-0">📞 전화번호</span>
+            <span className="text-neutral-200">{activeModalSpot.phone || '02-9876-5432'}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-neutral-400 w-16 shrink-0">⏰ 영업시간</span>
+            <span className="text-neutral-200">{activeModalSpot.openHours}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-neutral-400 w-16 shrink-0">💵 가격정보</span>
+            <span className="text-fuchsia-400 font-semibold">{activeModalSpot.price}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="p-4 bg-neutral-950 border-t border-neutral-800">
+        <button 
+          onClick={() => { toggleSelectSpot(activeModalSpot.id); setActiveModalSpot(null); }} 
+          className="w-full py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-black text-xs rounded-2xl shadow-md transition"
+        >
+          {selectedSpots.includes(activeModalSpot.id) ? '✓ 코스에서 제거하기' : '+ 코스에 추가하기'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       {isRandomModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-neutral-900 border border-fuchsia-500/40 rounded-3xl max-w-sm w-full p-6 text-center space-y-4">

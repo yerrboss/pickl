@@ -1,15 +1,19 @@
 // api/kakao-search.js
+import url from 'url';
+
 export default async function handler(req, res) {
   // CORS 허용 헤더
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-  const { query } = req.query;
+  // Vercel Node.js 환경에서 쿼리 파라미터 안전하게 파싱
+  const parsedUrl = url.parse(req.url, true);
+  const query = parsedUrl.query.query;
+
   if (!query) {
     return res.status(400).json({ error: 'Query is required' });
   }
 
-  // 아까 확인했던 REST API 키
   const KAKAO_REST_KEY = "6c8220ae803f3de90bb013768644ae99";
 
   try {

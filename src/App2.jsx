@@ -16,11 +16,13 @@ const INITIAL_SPOTS = [
     tags: ['#인스타감성', '#이색체험', '#힙스터카페'],
     image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 연무장길 6',
+    phone: '02-3409-5971',
     price: '커피 6,000원~',
     openHours: '11:00 - 20:00 (월 휴무)',
     waitingTime: '약 15분',
     vibes: '감성적인 숍들과 카페가 모인 힙스터들의 성지',
     rating: 4.8,
+    reviews: 730,
     lat: 37.5445,
     lng: 127.0560,
   },
@@ -32,11 +34,13 @@ const INITIAL_SPOTS = [
     tags: ['#웨이팅맛집', '#해장성지', '#성수필수'],
     image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 연무장길 45',
+    phone: '02-465-6580',
     price: '감자탕(소) 28,000원',
     openHours: '24시간 영업',
     waitingTime: '약 40분 (피크타임)',
     vibes: '줄 서서 먹는 깊고 진한 국물의 감자탕 맛집',
     rating: 4.6,
+    reviews: 3520,
     lat: 37.5470,
     lng: 127.0530,
   },
@@ -48,11 +52,13 @@ const INITIAL_SPOTS = [
     tags: ['#전시회', '#야외산책', '#데이트코스'],
     image: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 왕십리로 83-21',
+    phone: '02-6233-1500',
     price: '입장료 12,000원',
     openHours: '11:00 - 18:00',
     waitingTime: '바로 입장 가능',
     vibes: '트렌디한 트랜시절 아트 전시와 힐링 스팟',
     rating: 4.9,
+    reviews: 4800,
     lat: 37.5430,
     lng: 127.0580,
   },
@@ -64,11 +70,13 @@ const INITIAL_SPOTS = [
     tags: ['#이색체험', '#팝업스토어', '#야간스팟'],
     image: 'https://images.unsplash.com/photo-1574391884720-bbc3640e0286?w=600&auto-format&fit=crop&q=80',
     address: '서울 성동구 연무장길 20',
+    phone: '02-555-1234',
     price: '무료 입장',
     openHours: '13:00 - 21:00',
     waitingTime: '약 10분',
     vibes: '네온 조명 아래 음악과 함께 텐션 올리는 플레이스',
     rating: 4.7,
+    reviews: 510,
     lat: 37.5420,
     lng: 127.0550,
   }
@@ -79,6 +87,7 @@ export default function App2() {
   const [activeTab, setActiveTab] = useState('ALL');
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [shareToastOpen, setShareToastOpen] = useState(false);
+  const [activeSpotDetail, setActiveSpotDetail] = useState(null); // PC 카드 클릭 / 모바일 상세 모달용
 
   const toggleSpot = (spot) => {
     if (selectedSpots.some(s => s.id === spot.id)) {
@@ -124,7 +133,6 @@ export default function App2() {
   return (
     <div className="w-full h-screen bg-zinc-950 text-white flex flex-col overflow-hidden font-sans pt-16 pb-20">
       
-      {/* 상단 네비게이션 헤더 */}
       <header className="px-6 py-3 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-2">
           <div className="bg-lime-400 text-black font-black px-2.5 py-1 rounded-lg text-sm shadow-[0_0_15px_rgba(163,230,53,0.3)]">
@@ -141,10 +149,8 @@ export default function App2() {
         </div>
       </header>
 
-      {/* 메인 콘텐츠 그리드 */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4">
         
-        {/* 1. 좌측 핫플 큐레이션 리스트 */}
         <div className="w-full lg:w-[380px] flex flex-col gap-3 overflow-y-auto pr-1">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-zinc-300">성수 핫플 큐레이션 ({INITIAL_SPOTS.length})</h3>
@@ -166,7 +172,11 @@ export default function App2() {
             {INITIAL_SPOTS.map((spot) => {
               const isSelected = selectedSpots.some(s => s.id === spot.id);
               return (
-                <div key={spot.id} className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3 flex gap-3 hover:border-zinc-700 transition">
+                <div 
+                  key={spot.id} 
+                  onClick={() => setActiveSpotDetail(spot)}
+                  className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3 flex gap-3 hover:border-zinc-700 transition cursor-pointer"
+                >
                   <img src={spot.image} alt={spot.name} className="w-20 h-20 rounded-xl object-cover shrink-0" />
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
@@ -180,16 +190,30 @@ export default function App2() {
                     
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-[10px] text-zinc-500">⏳ {spot.waitingTime}</span>
-                      <button
-                        onClick={() => toggleSpot(spot)}
-                        className={`px-3 py-1 rounded-full text-xs font-black transition flex items-center gap-1 ${
-                          isSelected 
-                            ? 'bg-zinc-800 text-lime-400 border border-lime-400/40' 
-                            : 'bg-lime-400 text-black hover:bg-lime-300'
-                        }`}
-                      >
-                        {isSelected ? <><Check className="w-3 h-3"/> 담김</> : <><Plus className="w-3 h-3"/> 코스 추가</>}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveSpotDetail(spot);
+                          }}
+                          className="md:hidden text-xs text-lime-400 font-bold hover:underline"
+                        >
+                          상세보기 &gt;
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleSpot(spot);
+                          }}
+                          className={`px-3 py-1 rounded-full text-xs font-black transition flex items-center gap-1 ${
+                            isSelected 
+                              ? 'bg-zinc-800 text-lime-400 border border-lime-400/40' 
+                              : 'bg-lime-400 text-black hover:bg-lime-300'
+                          }`}
+                        >
+                          {isSelected ? <><Check className="w-3 h-3"/> 담김</> : <><Plus className="w-3 h-3"/> 코스 추가</>}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -198,12 +222,10 @@ export default function App2() {
           </div>
         </div>
 
-        {/* 2. 중앙 오픈소스 테마 지도 */}
         <div className="flex-1 h-[400px] lg:h-full relative rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
           <ThemeMap version="v2" spots={selectedSpots} />
         </div>
 
-        {/* 3. 우측 오늘의 Pick;L 동선 관리 패널 */}
         <div className="w-full lg:w-[320px] bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
             <h3 className="text-xs font-black text-lime-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -243,7 +265,6 @@ export default function App2() {
             )}
           </div>
 
-          {/* 공유 버튼 */}
           {selectedSpots.length > 0 && (
             <button
               onClick={handleShareClick}
@@ -256,6 +277,82 @@ export default function App2() {
         </div>
 
       </div>
+
+      {/* v2 네온 테마 풍부한 상세 모달 */}
+      {activeSpotDetail && (
+  <div 
+    onClick={() => setActiveSpotDetail(null)}
+    className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer"
+  >
+    <div 
+      onClick={(e) => e.stopPropagation()}
+      className="bg-zinc-900 border border-zinc-700 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative text-white cursor-default"
+    >
+      <button onClick={() => setActiveSpotDetail(null)} className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black">
+        <X className="w-5 h-5" />
+      </button>
+      <div className="relative h-60">
+        <img src={activeSpotDetail.image} alt={activeSpotDetail.name} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-black/40" />
+        <div className="absolute bottom-4 left-5 right-5">
+          <span className="px-3 py-1 bg-lime-400 text-black text-xs font-bold rounded-full mb-2 inline-block">
+            {activeSpotDetail.category}
+          </span>
+          <h2 className="text-2xl font-black">{activeSpotDetail.name}</h2>
+        </div>
+      </div>
+      <div className="p-6 space-y-4 max-h-[50vh] overflow-y-auto">
+        <div className="grid grid-cols-3 gap-2 bg-zinc-950 p-3 rounded-2xl text-center border border-zinc-800">
+          <div>
+            <p className="text-[10px] text-zinc-400">평점</p>
+            <p className="text-sm font-bold text-amber-400">★ {activeSpotDetail.rating}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-zinc-400">대기 상태</p>
+            <p className="text-sm font-bold text-lime-400">{activeSpotDetail.waitingTime}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-zinc-400">리뷰 수</p>
+            <p className="text-sm font-bold text-zinc-200">{activeSpotDetail.reviews || 200}개</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="text-xs font-bold text-zinc-400 uppercase mb-1">상세 특징</h4>
+          <p className="text-xs text-zinc-200 leading-relaxed">{activeSpotDetail.vibes || activeSpotDetail.description}</p>
+        </div>
+
+        <div className="space-y-2 text-xs">
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-400 w-16 shrink-0">📍 주소</span>
+            <span className="text-zinc-200">{activeSpotDetail.address}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-400 w-16 shrink-0">📞 전화번호</span>
+            <span className="text-zinc-200">{activeSpotDetail.phone || '02-1234-5678'}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-400 w-16 shrink-0">⏰ 영업시간</span>
+            <span className="text-zinc-200">{activeSpotDetail.openHours}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-400 w-16 shrink-0">💵 가격/입장</span>
+            <span className="text-lime-400 font-semibold">{activeSpotDetail.price}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="p-4 bg-zinc-950 border-t border-zinc-800">
+        <button 
+          onClick={() => { toggleSpot(activeSpotDetail); setActiveSpotDetail(null); }} 
+          className="w-full py-3 bg-lime-400 hover:bg-lime-300 text-black font-black text-xs rounded-2xl shadow-md transition"
+        >
+          {selectedSpots.some(s => s.id === activeSpotDetail.id) ? '✓ 코스에서 제거하기' : '+ 코스에 추가하기'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       <NicknameModal
         isOpen={isNicknameModalOpen}
