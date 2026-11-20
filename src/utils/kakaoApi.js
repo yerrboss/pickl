@@ -50,33 +50,6 @@ function parseCategoryAndThumbnail(categoryName = '', index = 0) {
   return { category: categoryTag, price, image: pool[index % pool.length] };
 }
 
-export async function getPlaceSuggestions(keyword) {
-  const trimmed = (keyword || '').trim();
-  if (!trimmed) return [];
-
-  if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
-    return new Promise((resolve) => {
-      const ps = new window.kakao.maps.services.Places();
-      ps.keywordSearch(trimmed, (data, status) => {
-        if (status === window.kakao.maps.services.Status.OK && Array.isArray(data)) {
-          resolve(data.slice(0, 6));
-        } else {
-          resolve([]);
-        }
-      });
-    });
-  }
-
-  try {
-    const res = await fetch(`/api/kakao-search?query=${encodeURIComponent(trimmed)}`);
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data.documents) ? data.documents.slice(0, 6) : [];
-  } catch {
-    return [];
-  }
-}
-
 async function fetchLivePlacePhoto(spot, fallbackImage) {
   const cacheKey = spot.id || `${spot.name}_${spot.address}`;
   if (photoCache.has(cacheKey)) {
