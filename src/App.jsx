@@ -200,9 +200,9 @@ export default function App() {
           { id: 'v1', label: 'v1 라이트', color: 'bg-indigo-600 text-white' },
           { id: 'v2', label: 'v2 네온다크', color: 'bg-lime-400 text-black' },
           { id: 'v3', label: 'v3 숏폼/벤토', color: 'bg-fuchsia-600 text-white' },
-          { id: 'v4', label: 'v4 Y2K 사이버', color: 'bg-cyan-400 text-black' },
-          { id: 'v5', label: 'v5 에디토리얼', color: 'bg-amber-100 text-stone-900' },
-          { id: 'v6', label: 'v6 RPG 맵', color: 'bg-amber-400 text-stone-950 font-black' },
+          // { id: 'v4', label: 'v4 Y2K 사이버', color: 'bg-cyan-400 text-black' },
+          // { id: 'v5', label: 'v5 에디토리얼', color: 'bg-amber-100 text-stone-900' },
+          // { id: 'v6', label: 'v6 RPG 맵', color: 'bg-amber-400 text-stone-950 font-black' },
         ].map(v => (
           <button
             key={v.id}

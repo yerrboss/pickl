@@ -18,6 +18,8 @@ const THUMBNAIL_POOLS = {
   ]
 };
 
+const photoCache = new Map();
+
 function parseCategoryAndThumbnail(categoryName = '', index = 0) {
   const catLower = categoryName.toLowerCase();
   let pool = THUMBNAIL_POOLS.spot;
@@ -28,7 +30,15 @@ function parseCategoryAndThumbnail(categoryName = '', index = 0) {
     pool = THUMBNAIL_POOLS.cafe;
     categoryTag = '#힙스터카페';
     price = '☕ 6,000원~';
-  } else if (catLower.includes('음식점') || catLower.includes('식당') || catLower.includes('한식') || catLower.includes('양식') || catLower.includes('일식') || catLower.includes('중식') || catLower.includes('맛집')) {
+  } else if (
+    catLower.includes('음식점') ||
+    catLower.includes('식당') ||
+    catLower.includes('한식') ||
+    catLower.includes('양식') ||
+    catLower.includes('일식') ||
+    catLower.includes('중식') ||
+    catLower.includes('맛집')
+  ) {
     pool = THUMBNAIL_POOLS.food;
     categoryTag = '#웨이팅맛집';
     price = '🍲 12,000원~';
@@ -37,64 +47,82 @@ function parseCategoryAndThumbnail(categoryName = '', index = 0) {
     price = '입장료 무료';
   }
 
-  const selectedImage = pool[index % pool.length];
-  return { category: categoryTag, price, image: selectedImage };
+  return { category: categoryTag, price, image: pool[index % pool.length] };
+}
+
+async function fetchLivePlacePhoto(spot, fallbackImage) {
+  const cacheKey = spot.id || `${spot.name}_${spot.address}`;
+  if (photoCache.has(cacheKey)) {
+    return photoCache.get(cacheKey);
+  }
+
+  try {
+    const params = new URLSearchParams({
+      name: spot.name,
+      address: spot.address || ''
+    });
+    const res = await fetch(`/api/place-photo?${params.toString()}`);
+    if (!res.ok) {
+      photoCache.set(cacheKey, fallbackImage);
+      return fallbackImage;
+    }
+    const data = await res.json();
+    const resolvedUrl = data?.imageUrl || fallbackImage;
+    photoCache.set(cacheKey, resolvedUrl);
+    return resolvedUrl;
+  } catch {
+    photoCache.set(cacheKey, fallbackImage);
+    return fallbackImage;
+  }
 }
 
 export async function searchKakaoPlaces(keyword) {
-  return new Promise((resolve) => {
-    let checkCount = 0;
-    const interval = setInterval(() => {
-      if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
-        clearInterval(interval);
-        executeSearch();
-      } else {
-        checkCount++;
-        if (checkCount > 20) {
-          clearInterval(interval);
-          resolve([]);
-        }
-      }
-    }, 100);
+  if (!keyword || !keyword.trim()) return [];
 
-    function executeSearch() {
-      const ps = new window.kakao.maps.services.Places();
+  try {
+    const res = await fetch(`/api/kakao-search?query=${encodeURIComponent(keyword.trim())}`);
+    if (!res.ok) return [];
 
-      ps.keywordSearch(keyword, (data, status) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const mappedResults = data.map((doc, index) => {
-            const parsed = parseCategoryAndThumbnail(doc.category_name, index);
-            
-            const parsedLat = parseFloat(doc.y);
-            const parsedLng = parseFloat(doc.x);
-            const validLat = (!isNaN(parsedLat) && parsedLat > 0) ? parsedLat : 37.5445;
-            const validLng = (!isNaN(parsedLng) && parsedLng > 0) ? parsedLng : 127.0560;
-            
-            return {
-              id: `kakao_${doc.id}`,
-              name: doc.place_name,
-              category: parsed.category,
-              address: doc.road_address_name || doc.address_name,
-              phone: doc.phone || '정보 없음',
-              lat: validLat,
-              lng: validLng,
-              url: doc.place_url,
-              image: parsed.image,
-              rating: (4.5 + (index % 4) * 0.1).toFixed(1),
-              reviews: 150 + index * 32,
-              price: parsed.price,
-              hours: '11:00 - 22:00',
-              waitingTime: index % 3 === 0 ? '바로 입장 가능' : `약 ${20 + (index % 3) * 10}분 대기`,
-              waitingLevel: index % 3 === 0 ? 'low' : 'med',
-              description: `[실시간 핫플] ${doc.road_address_name || doc.address_name}에 위치한 트렌디한 공간입니다.`,
-              isIndoor: !doc.category_name.includes('공원')
-            };
-          });
-          resolve(mappedResults);
-        } else {
-          resolve([]);
-        }
-      });
-    }
-  });
+    const data = await res.json();
+    const docs = Array.isArray(data.documents) ? data.documents : [];
+
+    const mappedResults = docs.map((doc, index) => {
+      const parsed = parseCategoryAndThumbnail(doc.category_name, index);
+      const parsedLat = parseFloat(doc.y);
+      const parsedLng = parseFloat(doc.x);
+      const validLat = !isNaN(parsedLat) && parsedLat > 0 ? parsedLat : 37.5445;
+      const validLng = !isNaN(parsedLng) && parsedLng > 0 ? parsedLng : 127.0560;
+
+      return {
+        id: `kakao_${doc.id}`,
+        name: doc.place_name,
+        category: parsed.category,
+        address: doc.road_address_name || doc.address_name,
+        phone: doc.phone || '정보 없음',
+        lat: validLat,
+        lng: validLng,
+        url: doc.place_url,
+        image: parsed.image,
+        rating: (4.5 + (index % 4) * 0.1).toFixed(1),
+        reviews: 150 + index * 32,
+        price: parsed.price,
+        hours: '11:00 - 22:00',
+        waitingTime: index % 3 === 0 ? '바로 입장 가능' : `약 ${20 + (index % 3) * 10}분 대기`,
+        waitingLevel: index % 3 === 0 ? 'low' : 'med',
+        description: `[실시간 핫플] ${doc.road_address_name || doc.address_name}에 위치한 트렌디한 공간입니다.`,
+        isIndoor: !doc.category_name.includes('공원')
+      };
+    });
+
+    const enrichedResults = await Promise.all(
+      mappedResults.map(async (spot) => {
+        const liveImage = await fetchLivePlacePhoto(spot, spot.image);
+        return { ...spot, image: liveImage };
+      })
+    );
+
+    return enrichedResults;
+  } catch {
+    return [];
+  }
 }
